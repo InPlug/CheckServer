@@ -42,9 +42,7 @@ namespace CheckServer
         /// <summary>
         /// Standard Konstruktor.
         /// </summary>
-        public ComplexServerReturnObject()
-        {
-        }
+        public ComplexServerReturnObject() { }
 
         /// <summary>
         /// Deserialisierungs-Konstruktor.
