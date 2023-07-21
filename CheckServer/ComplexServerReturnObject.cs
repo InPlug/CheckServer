@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
@@ -16,28 +14,32 @@ namespace CheckServer
     ///
     /// 19.11.2014 Erik Nagel: erstellt
     /// </remarks>
-    [Serializable()]
+    [DataContract] // [Serializable()]
     public class ComplexServerReturnObject
     {
         /// <summary>
         /// Name des Servers, der angepingt werden soll.
         /// </summary>
-        public string Server { get; set; }
+        [DataMember]
+        public string? Server { get; set; }
 
         /// <summary>
         /// Timeout für einen einzelnen Ping.
         /// </summary>
-        public int Timeout { get; set; }
+        [DataMember]
+        public int? Timeout { get; set; }
 
         /// <summary>
         /// Anzahl Ping-Versuche, bevor ein Fehler erzeugt wird.
         /// </summary>
-        public int Retries { get; set; }
+        [DataMember]
+        public int? Retries { get; set; }
 
         /// <summary>
         /// Erfolgreicher Ping.
         /// </summary>
-        public int SuccessfulRetry { get; set; }
+        [DataMember]
+        public int? SuccessfulRetry { get; set; }
 
         /// <summary>
         /// Standard Konstruktor.
@@ -52,9 +54,9 @@ namespace CheckServer
         protected ComplexServerReturnObject(SerializationInfo info, StreamingContext context)
         {
             this.Server = info.GetString("Server");
-            this.Timeout = (int)info.GetValue("Timeout", typeof(int));
-            this.Retries = (int)info.GetValue("Retries", typeof(int));
-            this.SuccessfulRetry = (int)info.GetValue("SuccessfulRetry", typeof(int));
+            this.Timeout = (int?)info.GetValue("Timeout", typeof(int));
+            this.Retries = (int?)info.GetValue("Retries", typeof(int));
+            this.SuccessfulRetry = (int?)info.GetValue("SuccessfulRetry", typeof(int));
         }
 
         /// <summary>

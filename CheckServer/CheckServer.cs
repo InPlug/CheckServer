@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Net.NetworkInformation;
 using Vishnu.Interchange;
-using NetEti.Globals;
+using System.ComponentModel;
 
 namespace CheckServer
 {
@@ -23,12 +23,12 @@ namespace CheckServer
         /// des Checkers geändert hat, muss aber zumindest aber einmal zum
         /// Schluss der Verarbeitung aufgerufen werden.
         /// </summary>
-        public event CommonProgressChangedEventHandler NodeProgressChanged;
+        public event ProgressChangedEventHandler? NodeProgressChanged;
 
         /// <summary>
         /// Rückgabe-Objekt des Checkers
         /// </summary>
-        public object ReturnObject
+        public object? ReturnObject
         {
             get
             {
@@ -47,37 +47,37 @@ namespace CheckServer
         /// <param name="treeParameters">Für den gesamten Tree gültige Parameter oder null.</param>
         /// <param name="source">Auslösendes TreeEvent oder null.</param>
         /// <returns>True, False oder null</returns>
-        public bool? Run(object checkerParameters, TreeParameters treeParameters, TreeEvent source)
+        public bool? Run(object? checkerParameters, TreeParameters treeParameters, TreeEvent source)
         {
+            this.OnNodeProgressChanged(0);
             ComplexServerReturnObject rtn = new ComplexServerReturnObject();
             this._returnObject = rtn;
-            string[] para = checkerParameters.ToString().Split('|');
-            string server = para.Length > 0 ? para[0] : "";
+            string pString = (checkerParameters)?.ToString()?.Trim() ??
+                throw new ArgumentException(String.Format("Es wurden keine Parameter mitgegeben."));
+            string[] paraStrings = pString.Split('|');
+            string server = paraStrings.Length > 0 ? paraStrings[0] : "";
             if (String.IsNullOrEmpty(server))
             {
                 return false;
             }
             rtn.Server = server;
-            int timeout;
-            if (!(para.Length > 1) || !Int32.TryParse(para[1], out timeout))
+            if (!(paraStrings.Length > 1) || !Int32.TryParse(paraStrings[1], out int timeout))
             {
                 timeout = 2000;
             }
             rtn.Timeout = timeout;
-            int retries;
-            if (!(para.Length > 2) || !Int32.TryParse(para[2], out retries))
+            if (!(paraStrings.Length > 2) || !Int32.TryParse(paraStrings[2], out int retries))
             {
                 retries = 3;
             }
             rtn.Retries = retries;
             int retry = 0;
-            this.OnNodeProgressChanged(this.GetType().Name, retries, retry, ItemsTypes.items);
             Thread.Sleep(300); // damit man überhaupt was sieht.
             while (retry++ < retries && !this.canPing(server, timeout))
             {
-                this.OnNodeProgressChanged(this.GetType().Name, retries, retry, ItemsTypes.items);
+                this.OnNodeProgressChanged((int)(((100.0 * retry) / retries) + .5));
             }
-            this.OnNodeProgressChanged(this.GetType().Name, 100, 100, ItemsTypes.items);
+            this.OnNodeProgressChanged(100);
             if (retry > retries)
             {
                 rtn.SuccessfulRetry = 0;
@@ -111,14 +111,11 @@ namespace CheckServer
             }
         }
 
-        private object _returnObject = null;
+        private object? _returnObject = null;
 
-        private void OnNodeProgressChanged(string itemsName, int countAll, int countSucceeded, ItemsTypes itemsType)
+        private void OnNodeProgressChanged(int progressPercentage)
         {
-            if (NodeProgressChanged != null)
-            {
-                NodeProgressChanged(null, new CommonProgressChangedEventArgs(itemsName, countAll, countSucceeded, itemsType, null));
-            }
+            NodeProgressChanged?.Invoke(null, new ProgressChangedEventArgs(progressPercentage, null));
         }
     }
 }
