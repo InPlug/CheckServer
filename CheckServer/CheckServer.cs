@@ -19,7 +19,7 @@ namespace CheckServer
     {
 
         /// <summary>
-        /// Kann aufgerufen werden, wenn sich der Verarbeitungs-Fortschritt
+        /// Kann aufgerufen werden, wenn sich der Verarbeitungsfortschritt
         /// des Checkers geändert hat, muss aber zumindest aber einmal zum
         /// Schluss der Verarbeitung aufgerufen werden.
         /// </summary>
