@@ -10,7 +10,7 @@
     <Company>NetEti</Company>
     <Authors>Erik Nagel</Authors>
     <Description>$(AssemblyName) - Demoprogramm</Description>
-    <Copyright>Copyright © $(Authors) 2013-2023</Copyright>
+    <Copyright>Copyright © $(Authors) 2013-$([System.DateTime]::Now.Year)</Copyright>
     <AssemblyVersion>8.0.0.0</AssemblyVersion>
     <FileVersion>8.0.0.0</FileVersion>
   </PropertyGroup>
